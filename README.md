@@ -7,7 +7,28 @@
 - Something with hedging anyways
 - Something to measure effectiveness (fees, etc)
 
+# Usage
+
+## Create a env.list 
+
+In the root with keys to the exchanges
+
+````
+KRAKEN_APIKEY=
+KRAKEN_SECRET=
+GDAX_APIKEY=
+GDAX_SECRET=
+GDAX_PASSWORD=
+HITBTC_APIKEY=
+HITBTC_SECRET=
+BINANCE_APIKEY=
+BINANCE_SECRET=
+````
+
+## Run
+
+`docker build -t vl-crypto:latest . && docker run -ti -v `pwd`/app/:/opt/vl-crypto/app --env-file ./env.list vl-crypto:latest`
 
 # Links
 
-- (ledger)[https://github.com/0xProject/ledger-node-js-api)
+- (ledger)[https://github.com/0xProject/ledger-node-js-api]

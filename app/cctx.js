@@ -4,19 +4,6 @@ const log  = require ('ololog').configure ({ locate: false });
 require ('ansicolor').nice;
 const exchanges = require ('./exchanges');
 const portfolio = require ('./portfolio');
-const asTable = require ('as-table');
-
-async function doStuff(exchanges) {
-    for (let exchange of exchanges) {
-            // fetch account balance from the exchange 
-            //let balance = await exchange.fetchBalance ()
-            let orders = await exchange.fetchMyTrades ()
-
-            // output the result
-            //log (exchange.name.green, 'balance', balance)
-            log (asTable (orders.map (order => ccxt.omit (order, [ 'timestamp', 'info' ]))))
-        }
-}
 
 
 
@@ -26,11 +13,11 @@ async function doStuff(exchanges) {
 
     try { 
 
-        await doStuff(exchanges.exchanges);
+        await exchanges.doStuff();
 
-        let order = await exchanges.gdax.createLimitBuyOrder ('BTC/USD', 1, 10)
-        log(exchanges.gdax.name.green, 'order', order)
-        await exchanges.gdax.cancelOrder(order['id'])
+        //let order = await exchanges.gdax.createLimitBuyOrder ('BTC/USD', 1, 10)
+        //log(exchanges.gdax.name.green, 'order', order)
+        //await exchanges.gdax.cancelOrder(order['id'])
 
 
     } catch (e) {
