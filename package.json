@@ -22,5 +22,10 @@
   "bugs": {
     "url": "https://github.com/vlussenburg/vlu-crypto/issues"
   },
-  "homepage": "https://github.com/vlussenburg/vlu-crypto#readme"
+  "homepage": "https://github.com/vlussenburg/vlu-crypto#readme",
+  "devDependencies": {
+    "cctx": "^1.0.1",
+    "mocha": "^5.1.0",
+    "ololog": "^1.1.87"
+  }
 }
