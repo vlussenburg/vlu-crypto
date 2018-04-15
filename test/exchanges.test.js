@@ -1,5 +1,5 @@
 const assert = require('assert');
-const exchanges = require ('./exchanges');
+const exchanges = require ('../app/exchanges');
 
 describe('exchanges', function() {
   
