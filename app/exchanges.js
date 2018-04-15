@@ -37,7 +37,7 @@ let exchanges = [hitbtc, kraken, gdax, binance];
 exports.exchanges = exchanges;
 
 
-async function doStuff() {
+async function fetchPositiveBalances() {
     const balancesPerExchange = {}
     for (let exchange of exchanges) {
             balancesPerExchange[exchange.name] = {}
@@ -55,4 +55,4 @@ async function doStuff() {
     log ('balancesPerExchange', balancesPerExchange)
 }
 
-exports.doStuff = doStuff
+exports.fetchPositiveBalances = fetchPositiveBalances

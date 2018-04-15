@@ -1,5 +1,4 @@
 'use strict';
-const ccxt = require ('ccxt');
 const log  = require ('ololog').configure ({ locate: false });
 require ('ansicolor').nice;
 const exchanges = require ('./exchanges');
@@ -13,7 +12,7 @@ const portfolio = require ('./portfolio');
 
     try { 
 
-        await exchanges.doStuff();
+        await exchanges.fetchPositiveBalances();
 
         //let order = await exchanges.gdax.createLimitBuyOrder ('BTC/USD', 1, 10)
         //log(exchanges.gdax.name.green, 'order', order)

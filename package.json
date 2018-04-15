@@ -1,0 +1,26 @@
+{
+  "name": "vlu-crypto",
+  "version": "0.0.1-alpha",
+  "description": "index buy app",
+  "main": "cctx.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vlussenburg/vlu-crypto.git"
+  },
+  "keywords": [
+    "crypto",
+    "cctx"
+  ],
+  "author": "vincent@lussenburg.net",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vlussenburg/vlu-crypto/issues"
+  },
+  "homepage": "https://github.com/vlussenburg/vlu-crypto#readme"
+}
