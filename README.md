@@ -1,4 +1,6 @@
 
+![img](https://travis-ci.org/vlussenburg/vlu-crypto.svg?branch=master)
+
 # Roadmap
 
 - Red button to mass-market-sell going to other total amount
@@ -31,4 +33,4 @@ BINANCE_SECRET=
 
 # Links
 
-- (ledger)[https://github.com/0xProject/ledger-node-js-api]
+- [ledger](https://github.com/0xProject/ledger-node-js-api)
