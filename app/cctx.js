@@ -11,8 +11,14 @@ const ccxt = require ('ccxt');
 
     try { 
 
-        const balancesPerExchange = await new ExchangeService().fetchPositiveBalances();
-        log ('balancesPerExchange', balancesPerExchange)
+        new ExchangeService().fetchPositiveBalances()
+        .then((balancesPerExchange) => {
+            log ('balancesPerExchange', balancesPerExchange);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+        
 
         //let order = await exchanges.gdax.createLimitBuyOrder ('BTC/USD', 1, 10)
         //log(exchanges.gdax.name.green, 'order', order)

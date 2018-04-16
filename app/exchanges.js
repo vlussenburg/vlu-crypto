@@ -36,21 +36,25 @@ class ExchangeService {
         const balancesPerExchange = [];
 
         for (let exchange of this.exchanges) {
-            balancesPerExchange.push(new Promise(async (resolve) => {
-                const exchangeBalance = await exchange.fetchBalance()
-                
-                const positiveBalances = {};
-                positiveBalances.name = exchange.name;
-                positiveBalances.free = {};
+            balancesPerExchange.push(new Promise(async (resolve, reject) => {
+                try {
+                    const exchangeBalance = await exchange.fetchBalance();
+                    const positiveBalances = {};
+                    positiveBalances.name = exchange.name;
+                    positiveBalances.free = {};
 
-                const currencies = Object.keys (exchangeBalance.free);
-                currencies.forEach((currency) => {
-                    const freeBalanceRounded = exchangeBalance.free[currency].toPrecision(2)
-                    if (freeBalanceRounded >= MINIMUM_BALANCE) {
-                        positiveBalances.free[currency] = exchangeBalance.free[currency];
-                    }
-                });
-                resolve(positiveBalances);
+                    const currencies = Object.keys (exchangeBalance.free);
+                    currencies.forEach((currency) => {
+                        const freeBalanceRounded = exchangeBalance.free[currency].toPrecision(2)
+                        if (freeBalanceRounded >= MINIMUM_BALANCE) {
+                            positiveBalances.free[currency] = exchangeBalance.free[currency];
+                        }
+                    });
+                    resolve(positiveBalances);
+                } catch (e) {
+                    reject(e);
+                }
+                
             }));
         }
 
