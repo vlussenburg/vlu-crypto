@@ -41,7 +41,7 @@ class ExchangeService {
             const currencies = Object.keys (exchangeBalance.free)
             currencies.forEach((currency) => {
                 const freeBalanceRounded = exchangeBalance.free[currency].toPrecision(2)
-                if (freeBalanceRounded > MINIMUM_BALANCE) {
+                if (freeBalanceRounded >= MINIMUM_BALANCE) {
                     balancesPerExchange[exchange.name][currency] = exchangeBalance.free[currency];
                 }
             })

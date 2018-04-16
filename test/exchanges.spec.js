@@ -42,18 +42,20 @@ describe('exchanges', function() {
             })
         });
 
-        it('should filter out (close-to-)zero amounts', async() => {
+        it('should filter out (close-to-)zero balances and leave positive balances', async() => {
             const exchange = new DummyExchange({});
             exchange.name = 'a';
             exchange.fetchBalance = async function () {
-                return { 'free': { 'BTC': 0.01, 'XXX': 0 } };
+                return { 'free': { 'BTC': 0.0099, 'XXX': 0, 'ABC': 99.8 } };
             }
 
             exchangeService = new ExchangeService([exchange]);
-            const balances = await exchangeService.fetchPositiveBalances();
+            const balances = exchangeService.fetchPositiveBalances();
 
-            assert.equal(Object.keys(balances).length, 1)
-            assert.equal(Object.keys(balances['a']).length, 0)
+            assert.equal(Object.keys(balances).length, 1);
+            assert.equal(Object.keys(balances)[0], 'a');
+            assert.equal(Object.keys(balances['a']).length, 1);
+            assert.equal(balances['a']['ABC'], 99.8);
         });
     });
 
