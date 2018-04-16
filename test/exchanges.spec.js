@@ -33,12 +33,10 @@ describe('exchanges', function() {
     describe('#fetchPositiveBalances()', function() {
         it('should report the positive balance exactly once per exchange', async() => {
             const balances = await exchangeService.fetchPositiveBalances();
-            const exchangeNames = Object.keys(balances);
 
-            assert.equal(exchangeNames.length, Object.keys(exchangeToAmountMap).length)
-            exchangeNames.forEach((exchangeName) => {
-                const balance = balances[exchangeName]
-                assert.equal(balance['BTC'], exchangeToAmountMap[exchangeName]);
+            assert.equal(balances.length, Object.keys(exchangeToAmountMap).length)
+            balances.forEach((exchangeBalance) => {
+                assert.equal(exchangeBalance.free['BTC'], exchangeToAmountMap[exchangeBalance.name]);
             })
         });
 
@@ -50,12 +48,12 @@ describe('exchanges', function() {
             }
 
             exchangeService = new ExchangeService([exchange]);
-            const balances = exchangeService.fetchPositiveBalances();
+            const balances = await exchangeService.fetchPositiveBalances();
 
-            assert.equal(Object.keys(balances).length, 1);
-            assert.equal(Object.keys(balances)[0], 'a');
-            assert.equal(Object.keys(balances['a']).length, 1);
-            assert.equal(balances['a']['ABC'], 99.8);
+            assert.equal(balances.length, 1);
+            assert.equal(balances[0].name, 'a');
+            assert.equal(Object.keys(balances[0].free).length, 1);
+            assert.equal(balances[0].free['ABC'], 99.8);
         });
     });
 
