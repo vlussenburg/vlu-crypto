@@ -27,5 +27,8 @@
     "ccxt": "*",
     "mocha": "^5.1.0",
     "ololog": "^1.1.87"
+  },
+  "dependencies": {
+    "sinon": "^4.5.0"
   }
 }

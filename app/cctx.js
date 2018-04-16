@@ -1,10 +1,9 @@
 'use strict';
 const log  = require ('ololog').configure ({ locate: false });
 require ('ansicolor').nice;
-const exchanges = require ('./exchanges');
+const ExchangeService = require ('./exchanges').ExchangeService;
 const portfolio = require ('./portfolio');
-
-
+const ccxt = require ('ccxt');
 
 (async function () {
 
@@ -12,7 +11,8 @@ const portfolio = require ('./portfolio');
 
     try { 
 
-        await exchanges.fetchPositiveBalances();
+        const balancesPerExchange = await new ExchangeService().fetchPositiveBalances();
+        log ('balancesPerExchange', balancesPerExchange)
 
         //let order = await exchanges.gdax.createLimitBuyOrder ('BTC/USD', 1, 10)
         //log(exchanges.gdax.name.green, 'order', order)
