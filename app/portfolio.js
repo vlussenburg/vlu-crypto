@@ -1,7 +1,7 @@
 'use strict';
 const log  = require ('ololog').configure ({ locate: false });
 
-exports.portfolioRecipe = 
+const portfolioRecipe = 
 `BTC,30.00%
 ETH,29.44%
 XRP,14.21%
@@ -14,3 +14,15 @@ DASH,1.90%
 TRX,1.80%`;
 
 exports.totalValue = 10000;
+
+exports.getPortfolioRecipe = function() {
+    const portfolioRecipeDict = {}
+    const portfolioLines = portfolioRecipe.split("\n");
+
+    portfolioLines.forEach((lines) => {
+        const currencyPercentagePair = lines.split(",");
+        portfolioRecipeDict[currencyPercentagePair[0]] = parseFloat(currencyPercentagePair[1]);
+    });
+
+    return portfolioRecipeDict;
+};
