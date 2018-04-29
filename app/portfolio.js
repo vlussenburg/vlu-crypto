@@ -1,6 +1,8 @@
 'use strict';
 const log  = require ('ololog').configure ({ locate: false });
 
+const ExchangeService = require ('./exchanges').ExchangeService;
+
 const portfolioRecipe = 
 `BTC,30.00%
 ETH,29.44%
@@ -13,16 +15,58 @@ NEO,2.41%
 DASH,1.90%
 TRX,1.80%`;
 
-exports.totalValue = 10000;
+const portfolioCurrencies = [
+'BTC',
+'ETH',
+'XRP',
+'BCH',
+'LTC',
+'EOS',
+'ADA',
+'NEO',
+'DASH',
+'TRX'
+];
 
-exports.getPortfolioRecipe = function() {
-    const portfolioRecipeDict = {}
-    const portfolioLines = portfolioRecipe.split("\n");
+exports.desiredPortfolioValue = 10000;
 
-    portfolioLines.forEach((lines) => {
-        const currencyPercentagePair = lines.split(",");
-        portfolioRecipeDict[currencyPercentagePair[0]] = parseFloat(currencyPercentagePair[1]);
-    });
+class Portfolio {
+    constructor(exchangeService = new ExchangeService()) {
+        this.portfolio = {};
+        this.exchangeService = exchangeService;
+        this.portfolioRecipeDict = this.fetchPortfolioRecipe();
 
-    return portfolioRecipeDict;
-};
+        portfolioCurrencies.forEach((currency) => {
+            this.portfolio[currency] = 0;
+        });
+    }
+
+    fetchPortfolioRecipe() {
+        const portfolioRecipeDict = {};
+        const portfolioLines = portfolioRecipe.split("\n");
+
+        portfolioLines.forEach((lines) => {
+            const currencyPercentagePair = lines.split(",");
+            portfolioRecipeDict[currencyPercentagePair[0]] = parseFloat(currencyPercentagePair[1]);
+        });
+
+        return portfolioRecipeDict;
+    }
+
+    getPortfolioRecipe() {
+        return this.portfolioRecipeDict;
+    };
+
+    loadPortfolio() {
+        let balancesPerExchange = exchangeService.fetchPositiveBalances();
+
+        balancesPerExchange.forEach((balance) => {
+            Object.keys(balance.free).forEach((currency) => {
+                portfolio[currency] += balance.free[currency];
+            });
+        });
+    }
+}
+exports.Portfolio = Portfolio;
+
+
