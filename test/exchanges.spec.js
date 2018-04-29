@@ -23,7 +23,7 @@ describe('exchanges', function() {
         let exchanges = [];
         Object.keys(exchangeToAmountMap).forEach((exchangeName) => {
             const exchange = new DummyExchange({});
-            exchange.name = exchangeName;       
+            exchange.name = exchangeName;
             exchanges.push(exchange);
         });
 

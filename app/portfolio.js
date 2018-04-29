@@ -37,7 +37,7 @@ class Portfolio {
         this.portfolioRecipeDict = this.fetchPortfolioRecipe();
 
         portfolioCurrencies.forEach((currency) => {
-            this.portfolio[currency] = 0;
+            this.portfolio[currency] = 0.0;
         });
     }
 
@@ -57,14 +57,18 @@ class Portfolio {
         return this.portfolioRecipeDict;
     };
 
-    loadPortfolio() {
-        let balancesPerExchange = exchangeService.fetchPositiveBalances();
+    async loadPortfolio() {
+        let balancesPerExchange = await this.exchangeService.fetchPositiveBalances();
 
         balancesPerExchange.forEach((balance) => {
             Object.keys(balance.free).forEach((currency) => {
-                portfolio[currency] += balance.free[currency];
+                if (portfolioCurrencies.includes(currency)) {
+                    this.portfolio[currency] += balance.free[currency];
+                }
             });
         });
+
+        return this.portfolio;
     }
 }
 exports.Portfolio = Portfolio;
