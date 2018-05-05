@@ -5,16 +5,139 @@ const ExchangeService = require ('./exchanges').ExchangeService;
 const Portfolio = require ('./portfolio').Portfolio;
 const ccxt = require ('ccxt');
 
-(async function () {
+const largecap_pairs = [
+'BTC/USD',
+'ETH/USD',
+'XRP/BTC',
+'BCH/BTC',
+'EOS/BTC',
+'LTC/BTC',
+'ADA/BTC',
+'XLM/BTC',
+'IOTA/BTC',
+'NEO/BTC',
+'XMR/BTC',
+'TRX/BTC',
+'DASH/BTC',
+'XEM/BTC',
+'BCD/BTC',
+'BCX/BTC',
+'ETC/BTC',
+'VEN/BTC',
+'QTUM/BTC',
+'BTG/BTC'
+];
 
-    //console.log (kraken.id,    await kraken.loadMarkets ())
+const midcap_pairs = [
+'USDT/BTC',
+'OMG/BTC',
+'BNB/BTC',
+'ICX/BTC',
+'BTMSTAR/BTC',
+'LSK/BTC',
+'ZEC/BTC',
+'HT/BTC',
+'XRB/BTC',
+'BTCP/BTC',
+'XVG/BTC',
+'PPT/BTC',
+'BCN/BTC',
+'STEEM/BTC',
+'WAN/BTC',
+'BTS/BTC',
+'SC/BTC',
+'ZIL/BTC',
+'DOGE/BTC',
+'STRAT/BTC',
+'ZRX/BTC',
+'AE/BTC',
+'DGD/BTC',
+'WAVES/BTC',
+'SNT/BTC',
+'DCR/BTC',
+'RHOC/BTC',
+'REP/BTC',
+'WTC/BTC',
+'HSR/BTC',
+];
+
+const smallcap_pairs = [
+'AION/BTC',
+'ONT/BTC',
+'GNT/BTC',
+'LRC/BTC',
+'BAT/BTC',
+'IOST/BTC',
+'KMD/BTC',
+'ARDR/BTC',
+'DGB/BTC',
+'KCS/BTC',
+'ARK/BTC',
+'PIVX/BTC',
+'DCN/BTC',
+'DRGN/BTC',
+'MITH/BTC',
+'ELF/BTC',
+'GAS/BTC',
+'KNC/BTC',
+'SUB/BTC',
+'SYS/BTC',
+'QASH/BTC',
+'BQX/BTC',
+'SBTC',
+'FCT/BTC',
+'UBTC',
+'RDD/BTC',
+'BNT/BTC',
+'NAS/BTC',
+'MONA/BTC',
+'STORM/BTC',
+'FUN/BTC',
+'VERI/BTC',
+'ELA/BTC',
+'SALT/BTC',
+'GXS/BTC',
+'POWR/BTC',
+'XZC/BTC',
+'NXT/BTC',
+'R/BTC',
+'LINK/BTC',
+'REQ/BTC',
+'WC/BTC',
+'GBYTE/BTC',
+'PAY/BTC',
+'MAID/BTC',
+'NEBL/BTC',
+'DIG/BTC',
+'ETN/BTC',
+'CND/BTC',
+'PART/BTC',
+];
+
+(async function () {
 
     try { 
 
         //let balancesPerExchange = await new ExchangeService().fetchPositiveBalances()
         //log ('balancesPerExchange', balancesPerExchange);
 
-        log ('loadPortfolio', await new Portfolio().loadPortfolio());
+        const exchangeService = new ExchangeService();
+        await exchangeService.loadMarkets();
+        const portfolio = new Portfolio(exchangeService);
+        //log ('loadPortfolio', await portfolio.loadPortfolio());
+
+        largecap_pairs.forEach((pair) => {
+            const exchangesWithPair = exchangeService.findExchangesWithPair(pair);
+            log ('findExchangesWithPair: ' + pair, exchangesWithPair.map(exchange => exchange.name));
+
+            if (exchangesWithPair.length == 1) {
+                log ('only one for: ' + pair, exchangesWithPair.map(exchange => exchange.name));                
+            }
+
+            if (exchangesWithPair.length == 0) {
+                log ('zero for: ' + pair, exchangesWithPair.map(exchange => exchange.name));                
+            }
+        });        
 
 
 

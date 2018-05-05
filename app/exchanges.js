@@ -27,8 +27,20 @@ const binance = new ccxt.binance ({
     'options': { 'adjustForTimeDifference': true }
 });
 
+const kucoin = new ccxt.kucoin({});
+
+const bittrex = new ccxt.bittrex({});
+
+const cryptopia = new ccxt.cryptopia({});
+
+const bitfinex = new ccxt.bitfinex({});
+
+const livecoin = new ccxt.livecoin({});
+
+const okex = new ccxt.okex({});
+
 class ExchangeService {
-    constructor(exchanges = [hitbtc, kraken, gdax, binance]) {
+    constructor(exchanges = [hitbtc, kraken, gdax, binance, kucoin, bittrex, cryptopia, bitfinex, livecoin, okex]) {
         this.exchanges = exchanges;
     }
 
@@ -60,6 +72,28 @@ class ExchangeService {
 
         return Promise.all(balancesPerExchange);
     }
+
+    async loadMarkets() {
+        const promises = []
+        for (let exchange of this.exchanges) {
+            promises.push(new Promise(async (resolve, reject) => {
+                try {
+                    await exchange.loadMarkets();
+                    resolve();
+                } catch (e) {
+                    reject(e);
+                }
+            }));
+        }
+        await Promise.all(promises);
+    }
+
+    findExchangesWithPair(pair) {
+        const exchangesWithPair = [];
+        return this.exchanges.filter(exchange => (exchange.markets[pair]));
+    }
+
+    
 }
 
 exports.ExchangeService = ExchangeService;
