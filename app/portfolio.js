@@ -80,9 +80,11 @@ class Portfolio {
 
     // TODO test me
     async loadDeltas() {
-        return Object.keys(this.portfolio).map((currency) =>
-           this.portfolio[currency] - this.desiredPortfolio[currency]
+        const deltas = {};
+        Object.keys(this.portfolio).forEach((currency) =>
+            deltas[currency] = this.portfolio[currency] - this.desiredPortfolio[currency]
         );
+        return deltas;
     }
 
 
