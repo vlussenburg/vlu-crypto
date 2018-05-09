@@ -5,7 +5,7 @@ const Exchanges = require ('./exchanges').Exchanges;
 const Wallets = require('./wallets').Wallets;
 const ccxt = require ('ccxt');
 
-const portfolioRecipe = 
+const portfolioRecipe =
 `BTC,30.00%
 ETH,29.44%
 XRP,14.21%
@@ -38,8 +38,8 @@ class Portfolio {
         this.tickerExchange = tickerExchange;
         this.portfolioRecipeDict = this.fetchPortfolioRecipe();
         this.desiredPortfolio = {};
-        this.desiredPortfolioValue = 11277;
-        this.portfolioCurrency = 'USD'
+        this.desiredPortfolioValue = process.env.DESIRED_PORTFOLIO_VALUE;
+        this.portfolioCurrency = process.env.DESIRED_PORTFOLIO_CURRENCY;
     }
 
     createBlankPortfolio() {
@@ -78,6 +78,7 @@ class Portfolio {
         return this.desiredPortfolio;
     }
 
+    // TODO test me
     async loadDeltas() {
         return Object.keys(this.portfolio).map((currency) =>
            this.portfolio[currency] - this.desiredPortfolio[currency]
