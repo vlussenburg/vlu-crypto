@@ -1,7 +1,7 @@
 'use strict';
 const log  = require ('ololog').configure ({ locate: false });
 
-const ExchangeService = require ('./exchanges').ExchangeService;
+const Exchanges = require ('./exchanges').Exchanges;
 const Wallets = require('./wallets').Wallets;
 
 const portfolioRecipe = 
@@ -32,7 +32,7 @@ const portfolioCurrencies = [
 exports.desiredPortfolioValue = 10000;
 
 class Portfolio {
-    constructor(exchangeService = new ExchangeService(), wallets = new Wallets()) {
+    constructor(exchangeService = new Exchanges(), wallets = new Wallets()) {
         this.portfolio = {};
         this.wallets = wallets;
         this.exchangeService = exchangeService;

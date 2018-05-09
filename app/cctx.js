@@ -1,7 +1,7 @@
 'use strict';
 const log  = require ('ololog').configure ({ locate: false });
 require ('ansicolor').nice;
-const ExchangeService = require ('./exchanges').ExchangeService;
+const ExchangeService = require ('./exchanges').Exchanges;
 const Portfolio = require ('./portfolio').Portfolio;
 const ccxt = require ('ccxt');
 
@@ -118,15 +118,15 @@ const smallcap_pairs = [
 
     try { 
 
-        //let balancesPerExchange = await new ExchangeService().fetchPositiveBalances()
+        //let balancesPerExchange = await new Exchanges().fetchPositiveBalances()
         //log ('balancesPerExchange', balancesPerExchange);
 
         const exchangeService = new ExchangeService();
-        await exchangeService.loadMarkets();
+        //await exchangeService.loadMarkets();
         const portfolio = new Portfolio(exchangeService);
-        //log ('loadPortfolio', await portfolio.loadPortfolio());
+        log ('loadPortfolio', await portfolio.loadPortfolio());
 
-        largecap_pairs.forEach((pair) => {
+/*        largecap_pairs.forEach((pair) => {
             const exchangesWithPair = exchangeService.findExchangesWithPair(pair);
             log ('findExchangesWithPair: ' + pair, exchangesWithPair.map(exchange => exchange.name));
 
@@ -137,14 +137,7 @@ const smallcap_pairs = [
             if (exchangesWithPair.length == 0) {
                 log ('zero for: ' + pair, exchangesWithPair.map(exchange => exchange.name));                
             }
-        });        
-
-
-
-        //let order = await exchanges.gdax.createLimitBuyOrder ('BTC/USD', 1, 10)
-        //log(exchanges.gdax.name.green, 'order', order)
-        //await exchanges.gdax.cancelOrder(order['id'])
-
+        });  */      
 
     } catch (e) {
 

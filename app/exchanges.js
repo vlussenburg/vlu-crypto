@@ -39,7 +39,7 @@ const livecoin = new ccxt.livecoin({});
 
 const okex = new ccxt.okex({});
 
-class ExchangeService {
+class Exchanges {
     constructor(exchanges = [hitbtc, kraken, gdax, binance, kucoin, bittrex, cryptopia, bitfinex, livecoin, okex]) {
         this.exchanges = exchanges;
     }
@@ -47,7 +47,8 @@ class ExchangeService {
     async fetchPositiveBalances() {
         const balancesPerExchange = [];
 
-        for (let exchange of this.exchanges) {
+        const exchangesWithApiKey = this.exchanges.filter(exchange => exchange.apiKey);
+        for (let exchange of exchangesWithApiKey) {
             balancesPerExchange.push(new Promise(async (resolve, reject) => {
                 try {
                     const exchangeBalance = await exchange.fetchBalance();
@@ -57,7 +58,7 @@ class ExchangeService {
 
                     const currencies = Object.keys (exchangeBalance.free);
                     currencies.forEach((currency) => {
-                        const freeBalanceRounded = exchangeBalance.free[currency].toPrecision(2)
+                        const freeBalanceRounded = exchangeBalance.free[currency].toPrecision(2);
                         if (freeBalanceRounded >= MINIMUM_BALANCE) {
                             positiveBalances.free[currency] = exchangeBalance.free[currency];
                         }
@@ -74,7 +75,7 @@ class ExchangeService {
     }
 
     async loadMarkets() {
-        const promises = []
+        const promises = [];
         for (let exchange of this.exchanges) {
             promises.push(new Promise(async (resolve, reject) => {
                 try {
@@ -89,12 +90,11 @@ class ExchangeService {
     }
 
     findExchangesWithPair(pair) {
-        const exchangesWithPair = [];
         return this.exchanges.filter(exchange => (exchange.markets[pair]));
     }
 
     
 }
 
-exports.ExchangeService = ExchangeService;
+exports.Exchanges = Exchanges;
 

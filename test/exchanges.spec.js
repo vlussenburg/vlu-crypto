@@ -1,7 +1,7 @@
 'use strict';
 const assert = require('assert');
 const sinon = require('sinon');
-const ExchangeService = require ('../app/exchanges').ExchangeService;
+const Exchanges = require ('../app/exchanges').Exchanges;
 const ccxt = require ('ccxt');
 
 describe('exchanges', function() {
@@ -13,6 +13,10 @@ describe('exchanges', function() {
     }
 
     const DummyExchange = class DummyExchange extends ccxt.Exchange {
+        constructor () {
+            super();
+            this.apiKey = '123';
+        }
         async fetchBalance (params = {}) {
             return { 'free': { 'BTC': exchangeToAmountMap[this.name] } };
         }
@@ -27,14 +31,14 @@ describe('exchanges', function() {
             exchanges.push(exchange);
         });
 
-        exchangeService = new ExchangeService(exchanges);
+        exchangeService = new Exchanges(exchanges);
     });
   
     describe('#fetchPositiveBalances()', function() {
         it('should report the positive balance exactly once per exchange', async() => {
             const balances = await exchangeService.fetchPositiveBalances();
 
-            assert.equal(balances.length, Object.keys(exchangeToAmountMap).length)
+            assert.equal(balances.length, Object.keys(exchangeToAmountMap).length);
             balances.forEach((exchangeBalance) => {
                 assert.equal(exchangeBalance.free['BTC'], exchangeToAmountMap[exchangeBalance.name]);
             })
@@ -45,9 +49,9 @@ describe('exchanges', function() {
             exchange.name = 'a';
             exchange.fetchBalance = async function () {
                 return { 'free': { 'BTC': 0.0099, 'XXX': 0, 'ABC': 99.8 } };
-            }
+            };
 
-            exchangeService = new ExchangeService([exchange]);
+            exchangeService = new Exchanges([exchange]);
             const balances = await exchangeService.fetchPositiveBalances();
 
             assert.equal(balances.length, 1);
