@@ -124,26 +124,22 @@ const smallcap_pairs = [
         const exchangeService = new ExchangeService();
         //await exchanges.loadMarkets();
         const portfolio = new Portfolio(exchangeService);
-        portfolio.loadPortfolio().then((o) => {
-            log ('loadPortfolio', o);
-        })
-        portfolio.loadDesiredPortfolio().then((o) => {
-            log ('loadDesiredPortfolio', o);
-        })
+        log ('loadPortfolio', await portfolio.loadPortfolio());
+        log ('loadDesiredPortfolio', await portfolio.loadDesiredPortfolio());
+        log ('loadDeltas', await portfolio.loadDeltas());
 
+        /*        largecap_pairs.forEach((pair) => {
+                    const exchangesWithPair = exchanges.findExchangesWithPair(pair);
+                    log ('findExchangesWithPair: ' + pair, exchangesWithPair.map(exchange => exchange.name));
 
-/*        largecap_pairs.forEach((pair) => {
-            const exchangesWithPair = exchanges.findExchangesWithPair(pair);
-            log ('findExchangesWithPair: ' + pair, exchangesWithPair.map(exchange => exchange.name));
+                    if (exchangesWithPair.length == 1) {
+                        log ('only one for: ' + pair, exchangesWithPair.map(exchange => exchange.name));
+                    }
 
-            if (exchangesWithPair.length == 1) {
-                log ('only one for: ' + pair, exchangesWithPair.map(exchange => exchange.name));                
-            }
-
-            if (exchangesWithPair.length == 0) {
-                log ('zero for: ' + pair, exchangesWithPair.map(exchange => exchange.name));                
-            }
-        });  */      
+                    if (exchangesWithPair.length == 0) {
+                        log ('zero for: ' + pair, exchangesWithPair.map(exchange => exchange.name));
+                    }
+                });  */
 
     } catch (e) {
 

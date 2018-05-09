@@ -32,23 +32,24 @@ const portfolioCurrencies = [
 
 class Portfolio {
     constructor(exchanges = new Exchanges(), wallets = new Wallets(), tickerExchange = new ccxt.coinmarketcap()) {
-        this.portfolio = {};
+        this.portfolio = this.createBlankPortfolio();
         this.wallets = wallets;
         this.exchanges = exchanges;
         this.tickerExchange = tickerExchange;
         this.portfolioRecipeDict = this.fetchPortfolioRecipe();
         this.desiredPortfolio = {};
-        this.desiredPortfolioValue = 10000;
+        this.desiredPortfolioValue = 11277;
         this.portfolioCurrency = 'USD'
-
-        this.initPortfolio();
     }
 
-    initPortfolio() {
+    createBlankPortfolio() {
+        const portfolio = {};
         portfolioCurrencies.forEach((currency) => {
-            this.portfolio[currency] = 0.0;
+            portfolio[currency] = 0.0;
         });
+        return portfolio;
     }
+
     fetchPortfolioRecipe() {
         const portfolioRecipeDict = {};
         const portfolioLines = portfolioRecipe.split("\n");
@@ -71,10 +72,18 @@ class Portfolio {
         const tickers = await this.tickerExchange.fetchTickers();
         portfolioCurrencies.forEach((currency) => {
             const ticker = tickers[currency + '/' + this.portfolioCurrency];
+            log('price', ticker.last, currency);
             this.desiredPortfolio[currency] = this.portfolioRecipeDict[currency] *  (this.desiredPortfolioValue / ticker.last);
         });
         return this.desiredPortfolio;
     }
+
+    async loadDeltas() {
+        return Object.keys(this.portfolio).map((currency) =>
+           this.portfolio[currency] - this.desiredPortfolio[currency]
+        );
+    }
+
 
     async loadPortfolio() {
         let balancesPerExchange = await this.exchanges.fetchPositiveBalances();
