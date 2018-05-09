@@ -7,9 +7,9 @@ class Wallets {
 
     getBalances() {
     	return {
-    		'EOS': process.env.LEDGER_EOS,
-    		'NEO': process.env.LEDGER_NEO,
-    		'BCH': process.env.SAIFU_BCH,
+    		'EOS': parseFloat(process.env.LEDGER_EOS),
+    		'NEO': parseFloat(process.env.LEDGER_NEO),
+    		'BCH': parseFloat(process.env.SAIFU_BCH),
     	};
     }
 
