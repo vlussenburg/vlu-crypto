@@ -3,6 +3,7 @@ const log  = require ('ololog').configure ({ locate: false });
 
 const Exchanges = require ('./exchanges').Exchanges;
 const Wallets = require('./wallets').Wallets;
+const ccxt = require ('ccxt');
 
 const portfolioRecipe = 
 `BTC,30.00%
@@ -29,20 +30,25 @@ const portfolioCurrencies = [
 'TRX'
 ];
 
-exports.desiredPortfolioValue = 10000;
-
 class Portfolio {
-    constructor(exchangeService = new Exchanges(), wallets = new Wallets()) {
+    constructor(exchanges = new Exchanges(), wallets = new Wallets(), tickerExchange = new ccxt.coinmarketcap()) {
         this.portfolio = {};
         this.wallets = wallets;
-        this.exchangeService = exchangeService;
+        this.exchanges = exchanges;
+        this.tickerExchange = tickerExchange;
         this.portfolioRecipeDict = this.fetchPortfolioRecipe();
+        this.desiredPortfolio = {};
+        this.desiredPortfolioValue = 10000;
+        this.portfolioCurrency = 'USD'
 
+        this.initPortfolio();
+    }
+
+    initPortfolio() {
         portfolioCurrencies.forEach((currency) => {
             this.portfolio[currency] = 0.0;
         });
     }
-
     fetchPortfolioRecipe() {
         const portfolioRecipeDict = {};
         const portfolioLines = portfolioRecipe.split("\n");
@@ -59,8 +65,19 @@ class Portfolio {
         return this.portfolioRecipeDict;
     };
 
+    // TODO test me
+    async loadDesiredPortfolio() {
+        // under the assumption that the tickerExchange is faster returning all the tickers
+        const tickers = await this.tickerExchange.fetchTickers();
+        portfolioCurrencies.forEach((currency) => {
+            const ticker = tickers[currency + '/' + this.portfolioCurrency];
+            this.desiredPortfolio[currency] = this.portfolioRecipeDict[currency] *  (this.desiredPortfolioValue / ticker.last);
+        });
+        return this.desiredPortfolio;
+    }
+
     async loadPortfolio() {
-        let balancesPerExchange = await this.exchangeService.fetchPositiveBalances();
+        let balancesPerExchange = await this.exchanges.fetchPositiveBalances();
 
         balancesPerExchange.forEach((balance) => {
             Object.keys(balance.free).forEach((currency) => {

@@ -122,12 +122,18 @@ const smallcap_pairs = [
         //log ('balancesPerExchange', balancesPerExchange);
 
         const exchangeService = new ExchangeService();
-        //await exchangeService.loadMarkets();
+        //await exchanges.loadMarkets();
         const portfolio = new Portfolio(exchangeService);
-        log ('loadPortfolio', await portfolio.loadPortfolio());
+        portfolio.loadPortfolio().then((o) => {
+            log ('loadPortfolio', o);
+        })
+        portfolio.loadDesiredPortfolio().then((o) => {
+            log ('loadDesiredPortfolio', o);
+        })
+
 
 /*        largecap_pairs.forEach((pair) => {
-            const exchangesWithPair = exchangeService.findExchangesWithPair(pair);
+            const exchangesWithPair = exchanges.findExchangesWithPair(pair);
             log ('findExchangesWithPair: ' + pair, exchangesWithPair.map(exchange => exchange.name));
 
             if (exchangesWithPair.length == 1) {

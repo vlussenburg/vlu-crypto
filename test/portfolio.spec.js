@@ -26,7 +26,7 @@ describe('portofolio', function() {
     describe('#loadPortfolio()', function() {
                 it('should initialize all currencies with zero', async() => {
             const portfolio = await new Portfolio({
-                fetchPositiveBalances: function() { return [ ] } //exchangeService
+                fetchPositiveBalances: function() { return [ ] } //exchanges
             }).loadPortfolio();
 
             assert.equal(Object.keys(portfolio).length, 10);
@@ -36,7 +36,7 @@ describe('portofolio', function() {
 
         it('should do add totals from exchange', async() => {
             const portfolio = await new Portfolio({
-                fetchPositiveBalances: function() { //exchangeService
+                fetchPositiveBalances: function() { //exchanges
                     return [ 
                         { 'name': 'dummyExchange1', 'free': {'BTC': 1} },
                         { 'name': 'dummyExchange2', 'free': {'BTC': 1} }
@@ -49,7 +49,7 @@ describe('portofolio', function() {
 
         it('should ignore unknown currencies from exchange', async() => {
             const portfolio = await new Portfolio({
-                fetchPositiveBalances: function() { //exchangeService
+                fetchPositiveBalances: function() { //exchanges
                     return [ 
                         { 'name': 'dummyExchange', 'free': {'XXX': 1} }
                     ] }
@@ -59,7 +59,7 @@ describe('portofolio', function() {
         });
 
         it('should add balances from wallets', async() => {
-            const portfolio = await new Portfolio({ //exchangeService
+            const portfolio = await new Portfolio({ //exchanges
                 fetchPositiveBalances: function() {
                     return [ 
                         { 'name': 'dummyExchange', 'free': {'BTC': 1} }
