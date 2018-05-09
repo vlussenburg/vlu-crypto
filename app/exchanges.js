@@ -75,17 +75,7 @@ class Exchanges {
     }
 
     async loadMarkets() {
-        const promises = [];
-        for (let exchange of this.exchanges) {
-            promises.push(new Promise(async (resolve, reject) => {
-                try {
-                    await exchange.loadMarkets();
-                    resolve();
-                } catch (e) {
-                    reject(e);
-                }
-            }));
-        }
+        const promises = this.exchanges.map((exchange) => exchange.loadMarkets());
         await Promise.all(promises);
     }
 
