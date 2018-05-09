@@ -39,7 +39,7 @@ class Portfolio {
         this.portfolioRecipeDict = this.fetchPortfolioRecipe();
         this.desiredPortfolio = {};
         this.desiredPortfolioValue = process.env.DESIRED_PORTFOLIO_VALUE;
-        this.portfolioCurrency = process.env.DESIRED_PORTFOLIO_CURRENCY;
+        this.desiredPortfolioCurrency = process.env.DESIRED_PORTFOLIO_CURRENCY;
     }
 
     createBlankPortfolio() {
@@ -71,7 +71,7 @@ class Portfolio {
         // under the assumption that the tickerExchange is faster returning all the tickers
         const tickers = await this.tickerExchange.fetchTickers();
         portfolioCurrencies.forEach((currency) => {
-            const ticker = tickers[currency + '/' + this.portfolioCurrency];
+            const ticker = tickers[currency + '/' + this.desiredPortfolioCurrency];
             log('price', ticker.last, currency);
             this.desiredPortfolio[currency] = this.portfolioRecipeDict[currency] *  (this.desiredPortfolioValue / ticker.last);
         });
