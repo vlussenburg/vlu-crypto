@@ -29,6 +29,7 @@
   "devDependencies": {
     "ccxt": "*",
     "mocha": "^5.1.0",
+    "nyc": "^11.7.2",
     "ololog": "^1.1.87"
   },
   "dependencies": {
