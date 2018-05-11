@@ -1,8 +1,8 @@
 'use strict';
-const log  = require ('ololog').configure ({ locate: false });
-
 const Exchanges = require ('./exchanges').Exchanges;
-const Wallets = require('./wallets').Wallets;
+const Wallets = require ('./wallets').Wallets;
+
+const log  = require ('ololog').configure ({ locate: false });
 const ccxt = require ('ccxt');
 
 const portfolioRecipe =
@@ -39,7 +39,7 @@ class Portfolio {
         this.portfolioRecipeDict = this.fetchPortfolioRecipe();
         this.desiredPortfolio = {};
         this.desiredPortfolioValue = process.env.DESIRED_PORTFOLIO_VALUE;
-        this.desiredPortfolioCurrency = process.env.DESIRED_PORTFOLIO_CURRENCY;
+        this.fiatPortfolioCurrency = process.env.DESIRED_PORTFOLIO_CURRENCY;
     }
 
     createBlankPortfolio() {
@@ -68,18 +68,26 @@ class Portfolio {
 
     // TODO test me
     async loadDesiredPortfolio() {
-        // under the assumption that the tickerExchange is faster returning all the tickers
-        const tickers = await this.tickerExchange.fetchTickers();
+        const tickers = await this.getTickers();
         portfolioCurrencies.forEach((currency) => {
-            const ticker = tickers[currency + '/' + this.desiredPortfolioCurrency];
+            const ticker = tickers[this.getTradingPair(currency)];
             log('price', ticker.last, currency);
             this.desiredPortfolio[currency] = this.portfolioRecipeDict[currency] *  (this.desiredPortfolioValue / ticker.last);
         });
         return this.desiredPortfolio;
     }
 
-    // TODO test me
-    async loadDeltas() {
+    // under the assumption that the tickerExchange is faster returning all the tickers
+    async getTickers() {
+        return await this.tickerExchange.fetchTickers();
+    }
+
+    getTradingPair(currency) {
+        return currency + '/' + this.fiatPortfolioCurrency;
+    }
+
+// TODO test me
+    loadDeltas() {
         const deltas = {};
         Object.keys(this.portfolio).forEach((currency) =>
             deltas[currency] = this.portfolio[currency] - this.desiredPortfolio[currency]
@@ -105,7 +113,6 @@ class Portfolio {
                 this.portfolio[currency] += walletsBalances[currency];
             }
         }); 
-
 
         return this.portfolio;
     }

@@ -6,11 +6,11 @@ const ccxt = require ('ccxt');
 
 describe('exchanges', function() {
     const exchangeToAmountMap = {
-        'a': 1.0,
-        'b': 2.0,
-        'c': 3.0,
-        'd': 4.0
-    }
+        'exchange-a': 1.0,
+        'exchange-b': 2.0,
+        'exchange-c': 3.0,
+        'exchange-d': 4.0
+    };
 
     const DummyExchange = class DummyExchange extends ccxt.Exchange {
         constructor () {
@@ -22,21 +22,21 @@ describe('exchanges', function() {
         }
     };
 
-    let exchangeService;
+    let exchanges;
     beforeEach(function() {
-        let exchanges = [];
+        exchanges = [];
         Object.keys(exchangeToAmountMap).forEach((exchangeName) => {
             const exchange = new DummyExchange({});
             exchange.name = exchangeName;
             exchanges.push(exchange);
         });
 
-        exchangeService = new Exchanges(exchanges);
+        exchanges = new Exchanges(exchanges);
     });
   
     describe('#fetchPositiveBalances()', function() {
         it('should report the positive balance exactly once per exchange', async() => {
-            const balances = await exchangeService.fetchPositiveBalances();
+            const balances = await exchanges.fetchPositiveBalances();
 
             assert.equal(balances.length, Object.keys(exchangeToAmountMap).length);
             balances.forEach((exchangeBalance) => {
@@ -47,12 +47,12 @@ describe('exchanges', function() {
         it('should filter out (close-to-)zero balances and leave positive balances', async() => {
             const exchange = new DummyExchange({});
             exchange.name = 'a';
-            exchange.fetchBalance = async function () {
+            exchange.fetchBalance = async() => {
                 return { 'free': { 'BTC': 0.0099, 'XXX': 0, 'ABC': 99.8 } };
             };
 
-            exchangeService = new Exchanges([exchange]);
-            const balances = await exchangeService.fetchPositiveBalances();
+            exchanges = new Exchanges([exchange]);
+            const balances = await exchanges.fetchPositiveBalances();
 
             assert.equal(balances.length, 1);
             assert.equal(balances[0].name, 'a');
@@ -60,5 +60,16 @@ describe('exchanges', function() {
             assert.equal(balances[0].free['ABC'], 99.8);
         });
     });
+
+    describe('#withBalance()', function() {
+        it('should find the exchanges with enough balance', async() => {
+            const exchangesWith4Btc = await exchanges.withBalance("BTC", 2.8);
+
+            assert.equal(exchangesWith4Btc.exchanges.length, 2);
+            assert.equal(exchangesWith4Btc.exchanges[0].name, "exchange-c");
+            assert.equal(exchangesWith4Btc.exchanges[1].name, "exchange-d");
+        });
+    });
+
 
 });

@@ -1,7 +1,6 @@
 'use strict';
 const ccxt = require ('ccxt');
 const log  = require ('ololog').configure ({ locate: false });
-const asTable = require ('as-table');
 
 const MINIMUM_BALANCE = 0.01;
 
@@ -45,18 +44,18 @@ class Exchanges {
     }
 
     async fetchPositiveBalances() {
-        const balancesPerExchange = [];
+        const balancesPerExchangePromises = [];
 
         const exchangesWithApiKey = this.exchanges.filter(exchange => exchange.apiKey);
         for (let exchange of exchangesWithApiKey) {
-            balancesPerExchange.push(new Promise(async (resolve, reject) => {
+            balancesPerExchangePromises.push(new Promise(async (resolve, reject) => {
                 try {
                     const exchangeBalance = await exchange.fetchBalance();
                     const positiveBalances = {};
                     positiveBalances.name = exchange.name;
                     positiveBalances.free = {};
 
-                    const currencies = Object.keys (exchangeBalance.free);
+                    const currencies = Object.keys(exchangeBalance.free);
                     currencies.forEach((currency) => {
                         const freeBalanceRounded = exchangeBalance.free[currency].toPrecision(2);
                         if (freeBalanceRounded >= MINIMUM_BALANCE) {
@@ -67,23 +66,37 @@ class Exchanges {
                 } catch (e) {
                     reject(e);
                 }
-                
+
             }));
         }
 
-        return Promise.all(balancesPerExchange);
+        return Promise.all(balancesPerExchangePromises);
     }
 
     async loadMarkets() {
-        const promises = this.exchanges.map((exchange) => exchange.loadMarkets());
-        await Promise.all(promises);
+        await Promise.all(this.exchanges.map((exchange) => exchange.loadMarkets()));
     }
 
-    findExchangesWithPair(pair) {
-        return this.exchanges.filter(exchange => (exchange.markets[pair]));
+    // UNTESTED, such a shallow wrapper around library code
+    withPair(pair) {
+        return new Exchanges(this.exchanges.filter(exchange => (exchange.markets[pair])));
     }
 
-    
+    async withBalance(currency, amount) {
+        const positiveBalances = await this.fetchPositiveBalances();
+        const balancesWithTheCurrencyAmount = positiveBalances.filter((exchangeBalance) => exchangeBalance.free[currency] >= amount);
+
+        const exchangesWithEnoughBalance = this.exchanges.filter(exchange => {
+            return balancesWithTheCurrencyAmount.find((exchangeBalance) => exchangeBalance.name === exchange.name);
+        });
+        return new Exchanges(exchangesWithEnoughBalance);
+    }
+
+    getPreferred() {
+        // very advanced algorithm
+        return this.exchanges[0];
+    }
+
 }
 
 exports.Exchanges = Exchanges;
